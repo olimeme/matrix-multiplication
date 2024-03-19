@@ -1,20 +1,37 @@
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
 public class App {
-    private static final int NUM_THREADS = Runtime.getRuntime().availableProcessors();
+    static final int MAX_THREADS_NUM = Runtime.getRuntime().availableProcessors();
+    static int[][] matrix_1 = new int[MAX_THREADS_NUM][MAX_THREADS_NUM];
+    static int[][] matrix_2 = new int[MAX_THREADS_NUM][MAX_THREADS_NUM];
+    static int[][] result = new int[MAX_THREADS_NUM][MAX_THREADS_NUM];
+    static int step_i = 0;
 
     public static void main(String[] args) {
-        int[][] matrix1 = Matrix.generateRandomMatrix(3, 3);
-        int[][] matrix2 = Matrix.generateRandomMatrix(3, 3);
+        matrix_1 = MatrixWorker.generateRandomMatrix(MAX_THREADS_NUM, MAX_THREADS_NUM);
+        matrix_2 = MatrixWorker.generateRandomMatrix(MAX_THREADS_NUM, MAX_THREADS_NUM);
+        System.out.println("-----------------Matrix 1-----------------");
+        MatrixWorker.printMatrix(matrix_1);
+        System.out.println("-----------------Matrix 2-----------------");
+        MatrixWorker.printMatrix(matrix_2);
 
-        int[][] result = Matrix.multiplyMatrices(matrix1, matrix2);
-        Matrix.printMatrix(matrix1);
-        System.out.println();
-        Matrix.printMatrix(matrix2);
-        System.out.println();
-        Matrix.printMatrix(result);
+        Thread[] threads = new Thread[MAX_THREADS_NUM];
+
+        for (int i = 0; i < MAX_THREADS_NUM; i++) {
+            threads[i] = new Thread(new MatrixWorker(step_i++, MAX_THREADS_NUM, matrix_1, matrix_2, result));
+            threads[i].start();
+        }
+        for (int i = 0; i < MAX_THREADS_NUM; i++) {
+            try {
+                threads[i].join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println("-----------------Multiplication of matricies-----------------");
+        for (int i = 0; i < MAX_THREADS_NUM; i++) {
+            for (int j = 0; j < MAX_THREADS_NUM; j++) {
+                System.out.print(result[i][j] + " ");
+            }
+            System.out.println();
+        }
     }
-
 }
