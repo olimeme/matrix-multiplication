@@ -1,13 +1,11 @@
 public class MatrixWorker implements Runnable {
     private int i;
-    private int threads_num;
     private int[][] matrix1;
     private int[][] matrix2;
     private int[][] result;
 
-    public MatrixWorker(int i, int thread_num, int[][] matrix1, int[][] matrix2, int[][] result) {
+    public MatrixWorker(int i, int[][] matrix1, int[][] matrix2, int[][] result) {
         this.i = i;
-        this.threads_num = thread_num;
         this.matrix1 = matrix1;
         this.matrix2 = matrix2;
         this.result = result;
@@ -32,15 +30,14 @@ public class MatrixWorker implements Runnable {
             System.out.println("Cannot multiply the matrices. Incorrect dimensions");
             return;
         }
-        for (int j = 0; j < threads_num; j++) {
-            for (int k = 0; k < threads_num; k++) {
+        for (int j = 0; j < cols1; j++) {
+            for (int k = 0; k < rows2; k++) {
                 result[i][j] += matrix1[i][k] * matrix2[k][j];
             }
         }
     }
 
     static void printMatrix(int[][] matrix) {
-        System.out.println("-------------------------------------");
         for (int[] row : matrix) {
             for (int i : row) {
                 System.out.print(i + " ");
