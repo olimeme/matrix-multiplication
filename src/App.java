@@ -1,68 +1,58 @@
+import java.util.Random;
+
 public class App {
     static final int MAX_THREADS_NUM = Runtime.getRuntime().availableProcessors();
-    static int N1 = 20;
-    static int N2 = 100;
-    static int N3 = 1000;
-    static int N4 = 5000;
+    static int N1 = 16;
+    static int N2 = 128;
+    static int N3 = 1024;
+    static int N4 = 4096;
 
     public static void main(String[] args) {
-        testThreadMatrix(N1);
-        testSyncMatrix(N1);
-        System.out.println("----------------------------------");
-        testThreadMatrix(N2);
-        testSyncMatrix(N2);
-        System.out.println("----------------------------------");
-        testThreadMatrix(N3);
-        testSyncMatrix(N3);
-        System.out.println("----------------------------------");
-        testThreadMatrix(N4);
-        testSyncMatrix(N4);
+        testMatrixSize(N1);
+        testMatrixSize(N2);
+        testMatrixSize(N3);
+        testMatrixSize(N4);
     }
 
-    public static void testThreadMatrix(int size) {
+    public static void testMatrixSize(int size) {
+        System.out.println("----------------------------------");
         int[][] matrix_1 = new int[size][size];
         int[][] matrix_2 = new int[size][size];
-        int[][] result = new int[size][size];
-        int k = 0;
-        matrix_1 = MatrixWorker.generateRandomMatrix(size, size);
-        matrix_2 = MatrixWorker.generateRandomMatrix(size, size);
-        System.out.println("Matrix size: " + size + "x" + size);
-        // System.out.println("-----------------Matrix 1-----------------");
-        // MatrixWorker.printMatrix(matrix_1);
-        // System.out.println("-----------------Matrix 2-----------------");
-        // MatrixWorker.printMatrix(matrix_2);
-
-        Thread[] threads = new Thread[MAX_THREADS_NUM];
-
-        long start = System.currentTimeMillis();
-        for (int i = 0; i < MAX_THREADS_NUM; i++) {
-            threads[i] = new Thread(new MatrixWorker(k++, matrix_1, matrix_2, result));
-            threads[i].start();
-        }
-        for (int i = 0; i < MAX_THREADS_NUM; i++) {
-            try {
-                threads[i].join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        long end = System.currentTimeMillis();
-
-        System.out.println("Matrix multiplication with threads:");
-        System.out.println("Time taken: " + (end - start) + "ms");
+        matrix_1 = generateRandomMatrix(size);
+        matrix_2 = generateRandomMatrix(size);
+        testStrassenAlgo(matrix_1, matrix_2, size);
+        testSeqStrassenAlgo(matrix_1, matrix_2, size);
+        testNaiveAlgo(matrix_1, matrix_2, size);
     }
 
-    public static void testSyncMatrix(int size) {
-        int[][] matrix_1 = new int[size][size];
-        int[][] matrix_2 = new int[size][size];
-        int[][] result = new int[size][size];
-        matrix_1 = MatrixWorker.generateRandomMatrix(size, size);
-        matrix_2 = MatrixWorker.generateRandomMatrix(size, size);
+    public static void testStrassenAlgo(int[][] matrix_1, int[][] matrix_2, int size) {
+
         System.out.println("Matrix size: " + size + "x" + size);
         // System.out.println("-----------------Matrix 1-----------------");
-        // MatrixWorker.printMatrix(matrix_1);
+        // printMatrix(matrix_1);
         // System.out.println("-----------------Matrix 2-----------------");
-        // MatrixWorker.printMatrix(matrix_2);
+        // printMatrix(matrix_2);
+
+        try {
+            long start = System.currentTimeMillis();
+            int[][] result = StrassenAlgo.concurAlgorithm(matrix_1, matrix_2, size);
+            long end = System.currentTimeMillis();
+            System.out.println("Matrix multiplication using concurrent Strassen Algorithm:");
+            System.out.println("Time taken: " + (end - start) + "ms");
+            // printMatrix(result);
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+
+    }
+
+    public static void testNaiveAlgo(int[][] matrix_1, int[][] matrix_2, int size) {
+        int[][] result = new int[size][size];
+        // System.out.println("Matrix size: " + size + "x" + size);
+        // System.out.println("-----------------Matrix 1-----------------");
+        // printMatrix(matrix_1);
+        // System.out.println("-----------------Matrix 2-----------------");
+        // printMatrix(matrix_2);
 
         long start = System.currentTimeMillis();
         for (int i = 0; i < size; i++) {
@@ -74,7 +64,45 @@ public class App {
         }
         long end = System.currentTimeMillis();
 
-        System.out.println("Matrix multiplication without threads:");
+        System.out.println("Matrix multiplication using naive approach:");
         System.out.println("Time taken: " + (end - start) + "ms");
+        // printMatrix(result);
+    }
+
+    public static void testSeqStrassenAlgo(int[][] matrix_1, int[][] matrix_2, int size) {
+        int[][] result = new int[size][size];
+        // System.out.println("Matrix size: " + size + "x" + size);
+        // System.out.println("-----------------Matrix 1-----------------");
+        // printMatrix(matrix_1);
+        // System.out.println("-----------------Matrix 2-----------------");
+        // printMatrix(matrix_2);
+
+        long start = System.currentTimeMillis();
+        result = StrassenAlgo.seqAlgorithm(matrix_1, matrix_2, size);
+        long end = System.currentTimeMillis();
+
+        System.out.println("Matrix multiplication using synchronous Strassen Algorithm:");
+        System.out.println("Time taken: " + (end - start) + "ms");
+        // printMatrix(result);
+    }
+
+    static int[][] generateRandomMatrix(int size) {
+        int[][] matrix = new int[size][size];
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                Random rand = new Random();
+                matrix[i][j] = rand.nextInt(10);
+            }
+        }
+        return matrix;
+    }
+
+    static void printMatrix(int[][] arr) {
+        for (int i = 0; i < arr.length; i++) {
+            for (int j = 0; j < arr.length; j++) {
+                System.out.print(arr[i][j] + " ");
+            }
+            System.out.println();
+        }
     }
 }
