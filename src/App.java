@@ -2,10 +2,10 @@ import java.util.Random;
 
 public class App {
     static final int MAX_THREADS_NUM = Runtime.getRuntime().availableProcessors();
-    static int N1 = 16;
-    static int N2 = 128;
+    static int N1 = 128;
+    static int N2 = 512;
     static int N3 = 1024;
-    static int N4 = 4096;
+    static int N4 = 2048;
 
     public static void main(String[] args) {
         testMatrixSize(N1);
@@ -21,7 +21,6 @@ public class App {
         matrix_1 = generateRandomMatrix(size);
         matrix_2 = generateRandomMatrix(size);
         testStrassenAlgo(matrix_1, matrix_2, size);
-        testSeqStrassenAlgo(matrix_1, matrix_2, size);
         testNaiveAlgo(matrix_1, matrix_2, size);
     }
 
@@ -65,23 +64,6 @@ public class App {
         long end = System.currentTimeMillis();
 
         System.out.println("Matrix multiplication using naive approach:");
-        System.out.println("Time taken: " + (end - start) + "ms");
-        // printMatrix(result);
-    }
-
-    public static void testSeqStrassenAlgo(int[][] matrix_1, int[][] matrix_2, int size) {
-        int[][] result = new int[size][size];
-        // System.out.println("Matrix size: " + size + "x" + size);
-        // System.out.println("-----------------Matrix 1-----------------");
-        // printMatrix(matrix_1);
-        // System.out.println("-----------------Matrix 2-----------------");
-        // printMatrix(matrix_2);
-
-        long start = System.currentTimeMillis();
-        result = StrassenAlgo.seqAlgorithm(matrix_1, matrix_2, size);
-        long end = System.currentTimeMillis();
-
-        System.out.println("Matrix multiplication using synchronous Strassen Algorithm:");
         System.out.println("Time taken: " + (end - start) + "ms");
         // printMatrix(result);
     }
