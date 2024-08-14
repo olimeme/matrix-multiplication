@@ -1,19 +1,3 @@
-## Getting Started
+# Matrix Multiplication Using Strassen Algorithm
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
-
-## Folder Structure
-
-The workspace contains two folders by default, where:
-
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
-
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
-
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
-
-## Dependency Management
-
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
-# matrix-multiplication
+> You are to develop 2 programs, capable of executing on multiple cores, that can multiply 2 large dense matrices. The 1st program is a multi-threaded Java program. The 2nd program is an OpenMP program. Both programs should be efficient and not adopt a naive approach.
